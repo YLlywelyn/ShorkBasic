@@ -20,4 +20,10 @@ namespace ShorkBasic
             return string.Format("{0}", errorName);
         }
     }
+    
+    internal class InvalidCharacterError : ShorkError
+    {
+        public InvalidCharacterError(Position startPosition, Position endPosition, string details)
+            : base(startPosition, endPosition, "Invalid Character", details) {}
+    }
 }

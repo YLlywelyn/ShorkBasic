@@ -17,6 +17,11 @@ namespace ShorkBasic
             this.position = new Position(filename);
         }
         
+        protected void Advance()
+        {
+            position.Advance();
+        }
+        
         protected Token[] DoLex()
         {
             List<Token> tokens = new List<Token>();
@@ -25,5 +30,7 @@ namespace ShorkBasic
             
             return tokens.ToArray();
         }
+        
+        
     }
 }

@@ -19,5 +19,17 @@
         {
             return new Position(index, line, column, filename);
         }
+        
+        public void Advance(char? currentChar = null)
+        {
+            this.index++;
+            this.column++;
+            
+            if (currentChar == '\n')
+            {
+                this.column = 0;
+                this.line++;
+            }
+        }
     }
 }
