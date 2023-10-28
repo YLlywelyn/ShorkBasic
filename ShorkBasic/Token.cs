@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ShorkBasic
+﻿namespace ShorkBasic
 {
     internal class Token
     {
-        public TokenType type;
-        public dynamic value;
+        public TokenType type { get; protected set; }
+        public dynamic value { get; protected set; }
 
         public Token(TokenType type, dynamic value = null)
         {
