@@ -4,12 +4,13 @@ namespace ShorkBasic
 {
     internal class Lexer
     {
-        public static Token[] LexText(string input, string filename)
+        public static Token[] Lex(string input, string filename)
         {
             return new Lexer(input, filename).DoLex();
         }
         
         protected string input { get; set; }
+        protected Position position { get; set; }
         
         protected Lexer(string input, string filename)
         {

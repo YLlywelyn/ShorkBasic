@@ -17,7 +17,7 @@
         
         public Position Copy()
         {
-            return new Position(index, line, column, filename);
+            return new Position(filename, index, line, column);
         }
         
         public void Advance(char? currentChar = null)

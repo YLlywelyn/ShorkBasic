@@ -8,7 +8,7 @@ namespace ShorkBasic
             {
                 Token[] tokens = Lexer.Lex(input, filename);
                 
-                return string.Join(", ", tokens);
+                return string.Join(',', tokens.AsEnumerable());
             }
             catch (ShorkError e)
             {
