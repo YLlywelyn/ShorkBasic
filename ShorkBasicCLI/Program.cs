@@ -12,7 +12,18 @@ namespace ShorkBasicCLI
                 Console.Write("\U0001f988>");
                 string input = Console.ReadLine();
 
-                Console.WriteLine(ShorkBasic.ShorkBasic.Run(input));
+                try
+                {
+                    Console.WriteLine(ShorkBasic.ShorkBasic.Run(input));
+                }
+                catch (ShorkBasic.ShorkError e)
+                {
+                    Console.WriteLine(e);
+                }
+                finally
+                {
+                    Console.WriteLine();
+                }
             }
         }
     }

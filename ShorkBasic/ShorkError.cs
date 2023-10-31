@@ -1,6 +1,6 @@
 namespace ShorkBasic
 {
-    internal class ShorkError : Exception
+    public class ShorkError : Exception
     {
         public Position startPosition { get; protected set; }
         public Position endPosition { get; protected set; }
@@ -17,11 +17,11 @@ namespace ShorkBasic
         
         public override string ToString()
         {
-            return string.Format("{0}", errorName);
+            return string.Format("{0}: {1}", errorName, details);
         }
     }
-    
-    internal class InvalidCharacterError : ShorkError
+
+    public class InvalidCharacterError : ShorkError
     {
         public InvalidCharacterError(Position startPosition, Position endPosition, string details)
             : base(startPosition, endPosition, "Invalid Character", details) {}

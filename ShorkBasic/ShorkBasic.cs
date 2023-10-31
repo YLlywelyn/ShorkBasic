@@ -4,16 +4,9 @@ namespace ShorkBasic
     {
         public static string Run(string input, string filename = "<stdin>")
         {
-            try
-            {
-                Token[] tokens = Lexer.Lex(input, filename);
-                
-                return string.Join(',', tokens.AsEnumerable());
-            }
-            catch (ShorkError e)
-            {
-                return e.ToString();
-            }
+            Token[] tokens = Lexer.Lex(input, filename);
+
+            return string.Join(',', tokens.AsEnumerable());
         }
     }
 }

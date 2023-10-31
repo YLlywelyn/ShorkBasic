@@ -1,6 +1,6 @@
 ﻿namespace ShorkBasic
 {
-    internal class Position
+    public class Position
     {
         public int index { get; protected set; }
         public int line { get; protected set; }
@@ -20,12 +20,12 @@
             return new Position(filename, index, line, column);
         }
         
-        public void Advance(char? currentChar = null)
+        public void Advance(bool newLine = false)
         {
             this.index++;
             this.column++;
             
-            if (currentChar == '\n')
+            if (newLine)
             {
                 this.column = 0;
                 this.line++;
