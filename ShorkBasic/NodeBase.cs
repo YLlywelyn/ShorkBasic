@@ -27,6 +27,11 @@ namespace ShorkBasic
         {
             this.numToken = numToken;
         }
+
+        public override string ToString()
+        {
+            return string.Format("{0}", numToken);
+        }
     }
 
     internal class BinaryOperationNode : NodeBase
@@ -41,6 +46,29 @@ namespace ShorkBasic
             this.leftNode = leftNode;
             this.opToken = opToken;
             this.rightNode = rightNode;
+        }
+
+        public override string ToString()
+        {
+            return string.Format("({0}, {1}, {2})", leftNode, opToken, rightNode);
+        }
+    }
+
+    internal class UnaryOperationNode : NodeBase
+    {
+        public Token opToken { get; protected set; }
+        public NodeBase node { get; protected set; }
+
+        public UnaryOperationNode(Token opToken, NodeBase node)
+            : base(opToken.startPosition, node.endPosition)
+        {
+            this.opToken = opToken;
+            this.node = node;
+        }
+
+        public override string ToString()
+        {
+            return string.Format("({0}, {1})", opToken, node);
         }
     }
 }

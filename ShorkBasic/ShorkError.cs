@@ -17,7 +17,7 @@ namespace ShorkBasic
         
         public override string ToString()
         {
-            return string.Format("{0}: {1}", errorName, details);
+            return string.Format("{0}: {1}\nFile: '{2}' Line {3}", errorName, details, startPosition.filename, startPosition.line+1);
         }
     }
 
@@ -25,5 +25,19 @@ namespace ShorkBasic
     {
         public InvalidCharacterError(Position startPosition, Position endPosition, string details)
             : base(startPosition, endPosition, "Invalid Character", details) {}
+    }
+
+    public class InvalidSyntaxError : ShorkError
+    {
+        public InvalidSyntaxError(Position startPosition, Position endPosition, string details)
+            : base(startPosition, endPosition, "Invalid Syntax", details) { }
+    }
+
+    public class RuntimeError : ShorkError
+    {
+        public Context context {get; protected set; }
+
+        public RuntimeError(Position startPosition, Position endPosition, string details)
+            : base(startPosition, endPosition, "Runtime Error", details) { }
     }
 }

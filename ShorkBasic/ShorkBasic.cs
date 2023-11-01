@@ -6,7 +6,9 @@ namespace ShorkBasic
         {
             Token[] tokens = Lexer.Lex(input, filename);
 
-            return string.Join(',', tokens.AsEnumerable());
+            NodeBase rootNode = Parser.Parse(tokens);
+
+            return string.Empty+rootNode.ToString();
         }
     }
 }

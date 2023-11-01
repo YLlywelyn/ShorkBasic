@@ -77,9 +77,20 @@ namespace ShorkBasic
                     tokens.Add(new Token(TokenType.EXPONENT, position));
                     Advance();
                 }
+                else if (currentChar == '(')
+                {
+                    tokens.Add(new Token(TokenType.LPAREN, position));
+                    Advance();
+                }
+                else if (currentChar == ')')
+                {
+                    tokens.Add(new Token(TokenType.RPAREN, position));
+                    Advance();
+                }
 
                 else
-                    throw new InvalidCharacterError(position, position, "Invalid character found.");
+                    throw new InvalidCharacterError(position, position,
+                                        string.Format("Invalid character '{0}' found.", currentChar));
             }
 
             tokens.Add(new Token(TokenType.EOF, position));
