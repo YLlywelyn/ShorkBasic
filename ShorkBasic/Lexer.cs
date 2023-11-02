@@ -119,7 +119,10 @@ namespace ShorkBasic
             }
 
             TokenType ttype = hasDecimalPoint ? TokenType.FLOAT : TokenType.INT;
-            return new Token(ttype, startPosition, position, int.Parse(numString));
+            if (ttype == TokenType.INT)
+                return new Token(ttype, startPosition, position, int.Parse(numString));
+            else
+                return new Token(ttype, startPosition, position, decimal.Parse(numString));
         }
     }
 }

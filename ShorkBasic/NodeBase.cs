@@ -30,6 +30,9 @@ namespace ShorkBasic
 
         public override string ToString()
         {
+#if DEBUG_OUTPUT
+            return string.Format("NumberNode({0})", numToken.value);
+#endif
             return string.Format("{0}", numToken);
         }
     }
@@ -50,6 +53,9 @@ namespace ShorkBasic
 
         public override string ToString()
         {
+#if DEBUG_OUTPUT
+            return string.Format("BinaryOpNode({0}, {1}, {2})", leftNode, opToken, rightNode);
+#endif
             return string.Format("({0}, {1}, {2})", leftNode, opToken, rightNode);
         }
     }
@@ -68,6 +74,9 @@ namespace ShorkBasic
 
         public override string ToString()
         {
+#if DEBUG_OUTPUT
+            return string.Format("UnaryOpNode({0}, {1})", opToken, node);
+#endif
             return string.Format("({0}, {1})", opToken, node);
         }
     }

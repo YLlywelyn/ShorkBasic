@@ -17,6 +17,8 @@ namespace ShorkBasic
         
         public override string ToString()
         {
+            if (startPosition == null || endPosition == null)
+                return string.Format("{0}: {1}", errorName, details);
             return string.Format("{0}: {1}\nFile: '{2}' Line {3}", errorName, details, startPosition.filename, startPosition.line+1);
         }
     }
@@ -37,7 +39,16 @@ namespace ShorkBasic
     {
         public Context context {get; protected set; }
 
-        public RuntimeError(Position startPosition, Position endPosition, string details)
-            : base(startPosition, endPosition, "Runtime Error", details) { }
+        public RuntimeError(Position startPosition, Position endPosition, string details, Context context)
+            : base(startPosition, endPosition, "Runtime Error", details)
+        {
+            this.context = context;
+        }
+    }
+
+    public class NotImplementedError : ShorkError
+    {
+        public NotImplementedError(string details)
+            : base(null, null, "Runtime Error", details) { }
     }
 }

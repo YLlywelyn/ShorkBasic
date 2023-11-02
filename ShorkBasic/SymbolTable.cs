@@ -18,7 +18,6 @@ namespace ShorkBasic
             this.parent = parent;
         }
 
-        /*
         public ShorkObject Get(string key)
         {
             if (symbols.ContainsKey(key))
@@ -26,8 +25,17 @@ namespace ShorkBasic
             else if (parent != null)
                 return parent.Get(key);
             else
-                throw new RuntimeError();
+                return null;
         }
-        */
+
+        public void Set(string key, ShorkObject value)
+        {
+            symbols[key] = value;
+        }
+
+        public void UnSet(string key)
+        {
+            symbols.Remove(key);
+        }
     }
 }
