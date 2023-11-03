@@ -27,5 +27,13 @@
         RBRACE      = 1 << 14,
         LBRACKET    = 1 << 15,
         RBRACKET    = 1 << 16,
+
+        NOT_EQUALS            = 1 << 17,
+        EQUALS                = 1 << 18,
+        DOUBLE_EQUALS         = 1 << 19,
+        LESS_THAN             = 1 << 20,
+        LESS_THAN_OR_EQUAL    = 1 << 21,
+        GREATER_THAN          = 1 << 22,
+        GREATER_THAN_OR_EQUAL = 1 << 23,
     }
 }

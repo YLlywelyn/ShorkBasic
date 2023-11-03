@@ -14,7 +14,7 @@ namespace ShorkBasicCLI
 
                 try
                 {
-                    Console.WriteLine(ShorkBasic.ShorkBasic.Run(input));
+                    Console.WriteLine(ShorkBasic.ShorkBasic.Run(input, sharedContext: true));
                 }
                 catch (ShorkBasic.ShorkError e)
                 {

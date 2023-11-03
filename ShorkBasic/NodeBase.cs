@@ -80,4 +80,28 @@ namespace ShorkBasic
             return string.Format("({0}, {1})", opToken, node);
         }
     }
+
+    internal class VarAssignNode : NodeBase
+    {
+        public Token varNameToken { get; protected set; }
+        public NodeBase valueNode { get; protected set; }
+
+        public VarAssignNode(Token varNameToken, NodeBase valueNode)
+            : base(varNameToken.startPosition, valueNode.endPosition)
+        {
+            this.varNameToken = varNameToken;
+            this.valueNode = valueNode;
+        }
+    }
+
+    internal class VarAccessNode : NodeBase
+    {
+        public Token varNameToken { get; protected set; }
+
+        public VarAccessNode(Token varNameToken)
+            : base(varNameToken.startPosition, varNameToken.endPosition)
+        {
+            this.varNameToken = varNameToken;
+        }
+    }
 }

@@ -26,7 +26,13 @@ namespace ShorkBasic
     public class InvalidCharacterError : ShorkError
     {
         public InvalidCharacterError(Position startPosition, Position endPosition, string details)
-            : base(startPosition, endPosition, "Invalid Character", details) {}
+            : base(startPosition, endPosition, "Invalid Character", details) { }
+    }
+
+    public class ExpectedCharacterError : ShorkError
+    {
+        public ExpectedCharacterError(Position startPosition, Position endPosition, string details)
+            : base(startPosition, endPosition, "Expected Character", details) { }
     }
 
     public class InvalidSyntaxError : ShorkError

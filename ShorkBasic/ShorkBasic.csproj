@@ -6,7 +6,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DefineConstants>$(DefineConstants);DEBUG_OUTPUT</DefineConstants>
+  </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="DecimalMath.DecimalEx" Version="1.0.2" />

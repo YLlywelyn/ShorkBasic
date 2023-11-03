@@ -39,7 +39,7 @@ namespace ShorkBasic
             }
             else
                 throw new InvalidSyntaxError(currentToken.startPosition, currentToken.endPosition,
-                                            "Expected '+', '-', '*' or '/'");
+                                            "Expected '+', '-', '*', '/', '^', '==', '!=', '<', '>', <=', '>=', 'AND' or 'OR'");
         }
 
         protected NodeBase ParseAtom()
@@ -50,6 +50,12 @@ namespace ShorkBasic
             {
                 Advance();
                 return new NumberNode(token);
+            }
+
+            else if (token.type == TokenType.IDENTIFIER)
+            {
+                Advance();
+                return new VarAccessNode(token);
             }
 
             else if (token.type == TokenType.LPAREN)
@@ -102,9 +108,54 @@ namespace ShorkBasic
             return ParseBinaryOperation(ParseFactor, (TokenType.MULTIPLY | TokenType.DIVIDE));
         }
 
-        protected NodeBase ParseExpression()
+        protected NodeBase ParseArithmeticExpression()
         {
             return ParseBinaryOperation(ParseTerm, (TokenType.PLUS | TokenType.MINUS));
+        }
+
+        protected NodeBase ParseComparisonExpression()
+        {
+            if (currentToken.Matches(TokenType.KEYWORD, "not"))
+            {
+                Token opToken = currentToken;
+                Advance();
+                NodeBase node = ParseComparisonExpression();
+                return new UnaryOperationNode(opToken, node);
+            }
+
+            return ParseBinaryOperation(ParseArithmeticExpression, (TokenType.DOUBLE_EQUALS
+                                                                  | TokenType.NOT_EQUALS
+                                                                  | TokenType.LESS_THAN
+                                                                  | TokenType.LESS_THAN_OR_EQUAL
+                                                                  | TokenType.GREATER_THAN
+                                                                  | TokenType.GREATER_THAN_OR_EQUAL));
+        }
+
+        protected NodeBase ParseExpression()
+        {
+            if (currentToken.Matches(TokenType.KEYWORD, "var"))
+            {
+                Advance();
+
+                if (currentToken.type != TokenType.IDENTIFIER)
+                    throw new InvalidSyntaxError(currentToken.startPosition, currentToken.endPosition,
+                                                    "Expected identifier");
+                Token varNameToken = currentToken;
+                Advance();
+
+                if (currentToken.type != TokenType.EQUALS)
+                    throw new InvalidSyntaxError(currentToken.startPosition, currentToken.endPosition,
+                                                    "Expected '='");
+                Advance();
+
+                NodeBase expr = ParseExpression();
+                return new VarAssignNode(varNameToken, expr);
+            }
+            else
+            {
+                return ParseBinaryOperation(ParseComparisonExpression, new (TokenType, dynamic)[] { (TokenType.KEYWORD, "and"),
+                                                                                                    (TokenType.KEYWORD, "or")});
+            }
         }
 
         protected delegate NodeBase BinaryOperationDelegate();
@@ -117,6 +168,25 @@ namespace ShorkBasic
             NodeBase leftNode = leftFunc();
 
             while (operators.HasFlag(currentToken.type))
+            {
+                Token opToken = currentToken;
+                Advance();
+                NodeBase rightNode = rightFunc();
+
+                leftNode = new BinaryOperationNode(leftNode, opToken, rightNode);
+            }
+
+            return leftNode;
+        }
+        protected NodeBase ParseBinaryOperation(BinaryOperationDelegate leftFunc, (TokenType, dynamic)[] tokenTypes)
+        {
+            return ParseBinaryOperation(leftFunc, tokenTypes, leftFunc);
+        }
+        protected NodeBase ParseBinaryOperation(BinaryOperationDelegate leftFunc, (TokenType, dynamic)[] tokenTypes, BinaryOperationDelegate rightFunc)
+        {
+            NodeBase leftNode = leftFunc();
+
+            while (tokenTypes.Contains((currentToken.type, currentToken.value)))
             {
                 Token opToken = currentToken;
                 Advance();

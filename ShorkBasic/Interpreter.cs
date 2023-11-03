@@ -9,7 +9,7 @@ namespace ShorkBasic
 {
     internal static class Interpreter
     {
-        internal static ShorkObject VisitNode(NodeBase node, Context context)
+        internal static dynamic VisitNode(NodeBase node, Context context)
         {
             switch (node)
             {
@@ -21,6 +21,10 @@ namespace ShorkBasic
                     return VisitBinaryOperationNode((BinaryOperationNode)node, context);
                 case UnaryOperationNode:
                     return VisitUnaryOperationNode((UnaryOperationNode)node, context);
+                case VarAssignNode:
+                    return VisitVarAssignNode((VarAssignNode)node, context);
+                case VarAccessNode:
+                    return VisitVarAccessNode((VarAccessNode)node, context);
             }
         }
 
@@ -29,7 +33,7 @@ namespace ShorkBasic
             return (ShorkNumber)(new ShorkNumber(node.numToken.value).SetContext(context).SetPosition(node.startPosition, node.endPosition));
         }
 
-        static ShorkObject VisitBinaryOperationNode(BinaryOperationNode node, Context context)
+        static dynamic VisitBinaryOperationNode(BinaryOperationNode node, Context context)
         {
             ShorkObject leftValue = VisitNode(node.leftNode, context);
             ShorkObject rightValue = VisitNode(node.rightNode, context);
@@ -60,7 +64,7 @@ namespace ShorkBasic
             return result.SetPosition(node.startPosition, node.endPosition);
         }
 
-        static ShorkObject VisitUnaryOperationNode(UnaryOperationNode node, Context context)
+        static dynamic VisitUnaryOperationNode(UnaryOperationNode node, Context context)
         {
             ShorkObject number = VisitNode(node.node, context);
 
@@ -71,6 +75,34 @@ namespace ShorkBasic
             if (node.opToken.type == TokenType.MINUS)
                 number = number.MultiplyBy(new ShorkNumber(-1));
             return number;
+        }
+
+        static dynamic VisitVarAssignNode(VarAssignNode node, Context context)
+        {
+            string varName = node.varNameToken.value;
+            ShorkObject value = VisitNode(node.valueNode, context);
+
+            context.symbolTable.Set(varName, value);
+            return value;
+        }
+
+        static dynamic VisitVarAccessNode(VarAccessNode node, Context context)
+        {
+            string varName = node.varNameToken.value;
+            dynamic value = context.symbolTable.Get(varName);
+            Type T = value.GetType();
+
+            if (value == null)
+                throw new RuntimeError(node.startPosition, node.endPosition,
+                                       string.Format("'{0}' is not defined", varName), context);
+
+            dynamic temp = value.Copy().SetPosition(node.startPosition, node.endPosition);
+            return temp;
+            if (temp.GetType() == typeof(ShorkNumber))
+                return (ShorkNumber) temp;
+            else
+                throw new RuntimeError(node.startPosition, node.endPosition,
+                                            string.Format("VarAccessNode gave unknown type '{0}'", temp.GetType().Name), context);
         }
     }
 }

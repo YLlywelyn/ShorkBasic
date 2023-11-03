@@ -2,7 +2,9 @@ namespace ShorkBasic
 {
     public static class ShorkBasic
     {
-        public static string Run(string input, string filename = "<stdin>")
+        static SymbolTable sharedSymbolTable = new SymbolTable();
+
+        public static string Run(string input, string filename = "<stdin>", bool sharedContext = false)
         {
             Token[] tokens = Lexer.Lex(input, filename);
 #if DEBUG_OUTPUT
@@ -14,7 +16,7 @@ namespace ShorkBasic
             Console.WriteLine(string.Format("DEBUG: RootNode: {0}", rootNode));
 #endif
 
-            Context context = new Context("<program>");
+            Context context = new Context("<program>", null, sharedContext ? sharedSymbolTable : null);
             ShorkObject result = Interpreter.VisitNode(rootNode, context);
 #if DEBUG_OUTPUT
             Console.WriteLine(string.Format("DEBUG: Result: {0}", result));

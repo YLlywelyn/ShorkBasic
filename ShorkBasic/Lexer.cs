@@ -5,9 +5,13 @@ namespace ShorkBasic
 {
     internal class Lexer
     {
+        readonly string[] KEYWORDS = {
+            "var"
+        };
         readonly char[] DIGITS = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0' };
         readonly char[] DIGITS_DOT = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '.' };
         readonly char[] WHITESPACE = { ' ', '\t', '\n', '\r' };
+        readonly char[] LETTERS = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
 
         internal static Token[] Lex(string input, string filename)
         {
@@ -52,6 +56,11 @@ namespace ShorkBasic
                     tokens.Add(MakeNumber());
                 }
 
+                else if (LETTERS.Contains((char)currentChar))
+                {
+                    tokens.Add(MakeIdentifier());
+                }
+
                 else if (currentChar == '+')
                 {
                     tokens.Add(new Token(TokenType.PLUS, position));
@@ -86,6 +95,23 @@ namespace ShorkBasic
                 {
                     tokens.Add(new Token(TokenType.RPAREN, position));
                     Advance();
+                }
+
+                else if (currentChar == '!')
+                {
+                    tokens.Add(MakeNotEquals());
+                }
+                else if (currentChar == '=')
+                {
+                    tokens.Add(MakeEquals());
+                }
+                else if (currentChar == '<')
+                {
+                    tokens.Add(MakeLessThan());
+                }
+                else if (currentChar == '>')
+                {
+                    tokens.Add(MakeGreaterThan());
                 }
 
                 else
@@ -123,6 +149,84 @@ namespace ShorkBasic
                 return new Token(ttype, startPosition, position, int.Parse(numString));
             else
                 return new Token(ttype, startPosition, position, decimal.Parse(numString));
+        }
+
+        Token MakeIdentifier()
+        {
+            Position startPosition = position.Copy();
+            string idString = string.Format("{0}", (char)currentChar);
+            Advance();
+
+            while (currentChar != null && LETTERS.Concat(DIGITS).Concat(new char[] { '_' }).Contains((char)currentChar))
+            {
+                idString += (char)currentChar;
+                Advance();
+            }
+
+            TokenType ttype = KEYWORDS.Contains(idString.ToLower()) ? TokenType.KEYWORD : TokenType.IDENTIFIER;
+            return new Token(ttype, startPosition, position, idString);
+        }
+
+        Token MakeNotEquals()
+        {
+            Position startPosition = position.Copy();
+            Advance();
+
+            if ((char)currentChar == '=')
+            {
+                Advance();
+                return new Token(TokenType.NOT_EQUALS, startPosition, position);
+            }
+            else
+            {
+                Advance();
+                throw new ExpectedCharacterError(startPosition, position, "Expected '=' after '!'");
+            }
+        }
+
+        Token MakeEquals()
+        {
+            Position startPosition = position.Copy();
+            TokenType ttype = TokenType.EQUALS;
+            Advance();
+
+            if ((char)currentChar == '=')
+            {
+                Advance();
+                ttype = TokenType.DOUBLE_EQUALS;
+            }
+
+            return new Token(ttype, startPosition, position);
+        }
+
+        Token MakeLessThan()
+        {
+            Position startPosition = position.Copy();
+            TokenType ttype = TokenType.LESS_THAN;
+            Advance();
+
+            if ((char)currentChar == '=')
+            {
+                Advance();
+                ttype = TokenType.LESS_THAN_OR_EQUAL;
+            }
+
+            return new Token(ttype, startPosition, position);
+        }
+
+        Token MakeGreaterThan()
+        {
+            Position startPosition = position.Copy();
+            TokenType ttype = TokenType.GREATER_THAN;
+            Advance();
+
+            if ((char)currentChar == '=')
+            {
+                Advance();
+                ttype = TokenType.GREATER_THAN_OR_EQUAL;
+            }
+
+            return new Token(ttype, startPosition, position);
         }
     }
 }
