@@ -26,4 +26,10 @@ namespace ShorkSharp
         public InvalidCharacterError(string details, Position startPosition)
             : base("Invalid Character", details, startPosition) { }
     }
+    
+    internal class InvalidSyntaxError : ShorkError
+    {
+        public InvalidSyntaxError(string details, Position startPosition)
+            : base("Invalid Syntax", details, startPosition) { }
+    }
 }
