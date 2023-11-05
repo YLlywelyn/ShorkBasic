@@ -11,4 +11,10 @@
     <ProjectReference Include="..\ShorkBasic\ShorkBasic.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="test script.sb">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

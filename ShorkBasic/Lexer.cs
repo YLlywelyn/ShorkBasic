@@ -6,11 +6,14 @@ namespace ShorkBasic
     internal class Lexer
     {
         readonly string[] KEYWORDS = {
-            "var"
+            "var",
+            "and",
+            "or",
+            "not"
         };
         readonly char[] DIGITS = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0' };
         readonly char[] DIGITS_DOT = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '.' };
-        readonly char[] WHITESPACE = { ' ', '\t', '\n', '\r' };
+        readonly char[] WHITESPACE = { ' ', '\t', '\r', '\n' };
         readonly char[] LETTERS = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
 
         internal static Token[] Lex(string input, string filename)
@@ -31,7 +34,7 @@ namespace ShorkBasic
         
         protected void Advance()
         {
-            position.Advance(currentChar == 'n');
+            position.Advance(currentChar == '\n');
             currentChar = (position.index < input.Length) ? input[position.index] : null;
         }
         
@@ -45,10 +48,27 @@ namespace ShorkBasic
 
             while (currentChar != null)
             {
+                // Skip whitespace
                 if (WHITESPACE.Contains((char)currentChar))
                 {
                     Advance();
                     continue;
+                }
+
+                // Skip comments
+                else if (currentChar == '#')
+                {
+                    Advance();
+                    while (currentChar != '\n')
+                        Advance();
+                    Advance();
+                }
+
+                // Create newline tokens
+                else if (currentChar == '\n' || currentChar == ';')
+                {
+                    tokens.Add(new Token(TokenType.NEWLINE, position));
+                    Advance();
                 }
 
                 else if (DIGITS.Contains((char)currentChar))

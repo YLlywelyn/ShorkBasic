@@ -1,0 +1,15 @@
+{
+  "profiles": {
+    "WSL": {
+      "commandName": "WSL2",
+      "distributionName": ""
+    },
+    "ShorkBasicCLI Test File": {
+      "commandName": "Project",
+      "commandLineArgs": "\"test script.sb\""
+    },
+    "ShorkBasicCLI Interactive": {
+      "commandName": "Project"
+    }
+  }
+}

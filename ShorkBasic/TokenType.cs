@@ -35,5 +35,7 @@
         LESS_THAN_OR_EQUAL    = 1 << 21,
         GREATER_THAN          = 1 << 22,
         GREATER_THAN_OR_EQUAL = 1 << 23,
+
+        NEWLINE     = 1 << 24,
     }
 }

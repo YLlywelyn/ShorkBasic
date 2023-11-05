@@ -50,6 +50,26 @@ namespace ShorkBasic
         {
             this.context = context;
         }
+
+        public override string ToString()
+        {
+            string output = "";
+            if (startPosition == null || endPosition == null)
+                output += string.Format("{0}: {1}", errorName, details);
+            else
+                output += string.Format("{0}: {1}\nFile: '{2}' Line {3}", errorName, details, startPosition.filename, startPosition.line + 1);
+
+            //output += "\n" + GenerateTraceback();
+            return output;
+        }
+
+        /*
+        string GenerateTraceback()
+        {
+            Context context = this.context;
+
+        }
+        */
     }
 
     public class NotImplementedError : ShorkError
