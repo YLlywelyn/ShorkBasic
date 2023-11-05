@@ -14,7 +14,9 @@ namespace ShorkSharp
             "var",
             "func",
             "while",
+            "do",
             "if",
+            "then",
             "else"
         };
         static readonly char[] WHITESPACE = { ' ', '\t', '\r' };
