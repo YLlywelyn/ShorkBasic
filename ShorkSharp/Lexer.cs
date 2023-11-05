@@ -12,6 +12,8 @@ namespace ShorkSharp
         static readonly string[] KEYWORDS =
         {
             "var",
+            "func",
+            "while",
             "if",
             "else"
         };
@@ -75,6 +77,12 @@ namespace ShorkSharp
                         return (null, error);
                     tokens.Add(token);
                 }
+                
+                // Identifiers and Keywords
+                else if (LETTERS.Contains(currentChar))
+                {
+                    tokens.Add(MakeIdentifierToken());
+                }
 
                 // Single character tokens
                 else
@@ -102,6 +110,15 @@ namespace ShorkSharp
                             break;
                         case '^':
                             tokens.Add(new Token(TokenType.EXPONENT, position));
+                            Advance();
+                            break;
+                            
+                        case '.':
+                            tokens.Add(new Token(TokenType.DOT, position));
+                            Advance();
+                            break;
+                        case ',':
+                            tokens.Add(new Token(TokenType.COMMA, position));
                             Advance();
                             break;
 
@@ -203,6 +220,31 @@ namespace ShorkSharp
             }
 
             return (new Token(TokenType.STRING, str, startPosition, position), null);
+        }
+        
+        Token MakeIdentifierToken()
+        {
+            Position startPosition = position.Copy();
+            string idstr = string.Empty + currentChar;
+            Advance();
+            
+            while (LETTERS_WITH_UNDERSCORE.Contains(currentChar))
+            {
+                idstr += currentChar;
+                Advance();
+            }
+            
+            if (idstr == "true")
+                return new Token(TokenType.BOOL, true, startPosition, position);
+            else if (idstr == "false")
+                return new Token(TokenType.BOOL, false, startPosition, position);
+            else if (idstr == "null")
+                return new Token(TokenType.NULL, startPosition, position);
+            else
+            {
+                TokenType ttype = KEYWORDS.Contains(idstr.ToLower()) ? TokenType.KEYWORD : TokenType.IDENTIFIER;
+                return new Token(ttype, idstr, startPosition, position);
+            }
         }
     }
 }

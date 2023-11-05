@@ -9,13 +9,32 @@
         public Position endPosition { get; protected set; }
 
         internal Token(TokenType type, Position startPosition)
-            : this(type, null, startPosition, startPosition) { }
-        internal Token(TokenType type, dynamic value, Position startPosition, Position endPosition = null)
+        {
+            this.type = type;
+            this.value = null;
+            this.startPosition = startPosition.Copy();
+            this.endPosition = startPosition.Copy();
+        }
+        internal Token(TokenType type, Position startPosition, Position endPosition)
+        {
+            this.type = type;
+            this.value = null;
+            this.startPosition = startPosition.Copy();
+            this.endPosition = endPosition.Copy();
+        }
+        internal Token(TokenType type, dynamic value, Position startPosition)
         {
             this.type = type;
             this.value = value;
             this.startPosition = startPosition.Copy();
-            this.endPosition = endPosition == null ? startPosition.Copy() : endPosition.Copy();
+            this.endPosition = startPosition.Copy();
+        }
+        internal Token(TokenType type, dynamic value, Position startPosition, Position endPosition)
+        {
+            this.type = type;
+            this.value = value;
+            this.startPosition = startPosition.Copy();
+            this.endPosition = endPosition.Copy();
         }
 
         public override string ToString()

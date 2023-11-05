@@ -15,6 +15,9 @@
         MULTIPLY,
         DIVIDE,
         EXPONENT,
+        
+        DOT,
+        COMMA,
 
         LPAREN,
         RPAREN,
