@@ -19,6 +19,18 @@ namespace ShorkSharp
             this.details = details;
             this.startPosition = startPosition;
         }
+
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder();
+
+            sb.AppendFormat("{0}: {1}", errorName, details);
+
+            if (startPosition != null)
+                sb.AppendFormat("\nFile: '{0}', line {1}", startPosition.filename, startPosition.line+1);
+
+            return sb.ToString();
+        }
     }
 
     internal class InvalidCharacterError : ShorkError
@@ -31,5 +43,11 @@ namespace ShorkSharp
     {
         public InvalidSyntaxError(string details, Position startPosition)
             : base("Invalid Syntax", details, startPosition) { }
+    }
+    
+    internal class InvalidEscapeSequenceError : ShorkError
+    {
+        public InvalidEscapeSequenceError(string details, Position startPosition)
+            : base("Invalid Escape Sequence", details, startPosition) { }
     }
 }

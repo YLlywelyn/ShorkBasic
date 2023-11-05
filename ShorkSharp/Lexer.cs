@@ -49,7 +49,7 @@ namespace ShorkSharp
         public (Token[], ShorkError?) Lex()
         {
             if (input.Length == 0)
-                return (new Token[]{}, new ShorkError("No input given", null));
+                return (new Token[] { }, new ShorkError("Empty Input", "Input text is empty", null));
             this.currentChar = input[0];
             
             List<Token> tokens = new List<Token>();
@@ -60,11 +60,20 @@ namespace ShorkSharp
                 {
                     Advance();
                 }
-                
+
                 // Number Tokens
                 else if (DIGITS.Contains(currentChar))
                 {
                     tokens.Add(MakeNumberToken());
+                }
+
+                // String Tokens
+                else if (currentChar == '"')
+                {
+                    (Token token, ShorkError error) = MakeStringToken();
+                    if (error != null)
+                        return (null, error);
+                    tokens.Add(token);
                 }
 
                 // Single character tokens
@@ -127,7 +136,7 @@ namespace ShorkSharp
             return (tokens.ToArray(), null);
         }
 
-        (Token, ShorkError) MakeNumberToken()
+        Token MakeNumberToken()
         {
             string numstring = string.Empty + currentChar;
             bool hasDecimalPoint = false;
@@ -139,15 +148,61 @@ namespace ShorkSharp
                 if (currentChar == '.')
                 {
                     if (hasDecimalPoint)
-                        return (null, new InvalidSyntaxError("Number cannot have more than one decimal point", position))
+                        break;
                     else
                         hasDecimalPoint = true;
                 }
                 numstring += currentChar;
                 Advance();
 			}
-			
-			return (new Token(TokenType.NUMBER, decimal.Parse(numstring), startPosition, position), null)
+
+            return new Token(TokenType.NUMBER, decimal.Parse(numstring), startPosition, position);
+        }
+
+        (Token, ShorkError) MakeStringToken()
+        {
+            Position startPosition = position.Copy();
+            string str = string.Empty;
+            Advance();
+
+            bool escaping = false;
+            while (true)
+            {
+                if (escaping)
+                {
+                    switch (currentChar)
+                    {
+                        default:
+                            return (null, new InvalidEscapeSequenceError(string.Format("\\{0}", currentChar), position));
+                        case '"':
+                            str += '"';
+                            break;
+                        case '\\':
+                            str += '\\';
+                            break;
+                        case 't':
+                            str += '\t';
+                            break;
+                    }
+                    escaping = false;
+                }
+
+                else if (currentChar == '"')
+                {
+                    Advance();
+                    break;
+                }
+
+                else if (currentChar == '\\')
+                    escaping = true;
+
+                else
+                    str += currentChar;
+
+                Advance();
+            }
+
+            return (new Token(TokenType.STRING, str, startPosition, position), null);
         }
     }
 }

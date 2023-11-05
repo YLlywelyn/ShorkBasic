@@ -19,10 +19,10 @@
             (Token[] tokens, ShorkError? error) = new Lexer(input, filename).Lex();
             if (error != null)
             {
-                // TODO: Handle Error
+                return error.ToString();
             }
 
-            return string.Join<Token>(',', tokens);
+            return string.Join<Token>(", ", tokens);
         }
     }
 }
