@@ -3,7 +3,12 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.7.34202.233
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShorkSharp", "ShorkSharp\ShorkSharp.csproj", "{F543F86E-16DA-4598-9C40-0224A70B931A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShorkSharp", "ShorkSharp\ShorkSharp.csproj", "{F543F86E-16DA-4598-9C40-0224A70B931A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShorkTests", "ShorkTests\ShorkTests.csproj", "{EE2DA7F8-5AAF-4731-AE1A-6A4148B25DA1}"
+	ProjectSection(ProjectDependencies) = postProject
+		{F543F86E-16DA-4598-9C40-0224A70B931A} = {F543F86E-16DA-4598-9C40-0224A70B931A}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +26,14 @@ Global
 		{F543F86E-16DA-4598-9C40-0224A70B931A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F543F86E-16DA-4598-9C40-0224A70B931A}.Release|ARM64.ActiveCfg = Release|ARM64
 		{F543F86E-16DA-4598-9C40-0224A70B931A}.Release|ARM64.Build.0 = Release|ARM64
+		{EE2DA7F8-5AAF-4731-AE1A-6A4148B25DA1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EE2DA7F8-5AAF-4731-AE1A-6A4148B25DA1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EE2DA7F8-5AAF-4731-AE1A-6A4148B25DA1}.Debug|ARM64.ActiveCfg = Debug|Any CPU
+		{EE2DA7F8-5AAF-4731-AE1A-6A4148B25DA1}.Debug|ARM64.Build.0 = Debug|Any CPU
+		{EE2DA7F8-5AAF-4731-AE1A-6A4148B25DA1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EE2DA7F8-5AAF-4731-AE1A-6A4148B25DA1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EE2DA7F8-5AAF-4731-AE1A-6A4148B25DA1}.Release|ARM64.ActiveCfg = Release|Any CPU
+		{EE2DA7F8-5AAF-4731-AE1A-6A4148B25DA1}.Release|ARM64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

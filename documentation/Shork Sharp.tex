@@ -1,0 +1,44 @@
+%!TeX Program = XeLatex
+\documentclass[a4paper,openany,oneside,nodeprecatedcode]{dndbook}
+
+\usepackage{lipsum}
+\usepackage{listings}
+\usepackage{multirow}
+\usepackage{xcolor}
+
+\lstdefinelanguage[Sharp]{C}[Sharp]{C}
+{
+	morestring=[b]'
+}
+\lstset
+{
+    language=[Sharp]C,
+    numbers=left,
+    breaklines=true,
+    breakatwhitespace=true,
+    showspaces=false,
+    showtabs=false,
+    postbreak=\mbox{\textcolor{red}{$\hookrightarrow$}\space},
+}
+
+\newcommand{\langname}{Shork\textbf{\#}}
+
+\title{\langname{}}
+\author{Miss Ylva Llywelyn}
+\date{2023/10/14}
+
+\begin{document}
+
+\frontmatter
+
+\maketitle
+
+\tableofcontents
+
+\mainmatter%
+
+\include{chapters/grammer.tex}
+
+\include{chapters/codelist.tex}
+
+\end{document}

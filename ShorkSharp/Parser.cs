@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ShorkSharp
+﻿namespace ShorkSharp
 {
-    internal class Parser
+    public class Parser
     {
         Token[] tokens;
         int tokenIndex = 0;
@@ -16,6 +10,29 @@ namespace ShorkSharp
         {
             this.tokens = tokens;
             this.currentToken = this.tokens[0];
+        }
+
+        public void Advance()
+        {
+            tokenIndex++;
+            currentToken = (tokenIndex < tokens.Length) ? this.tokens[tokenIndex] : null;
+        }
+
+        public ParseResult Parse()
+        {
+            ParseResult result = ParseExpression();
+
+            if (result.error != null && currentToken.type != TokenType.EOF)
+                return result.Failure(new InvalidSyntaxError("Unexpected EOF", currentToken.startPosition));
+
+            return result;
+        }
+
+        //##################################
+
+        protected ParseResult ParseExpression()
+        {
+            throw new NotImplementedException();
         }
     }
 }

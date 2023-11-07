@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ShorkSharp
 {
-    internal class ShorkError
+    public class ShorkError
     {
         public string errorName { get; protected set; }
         public string details { get; protected set; }
@@ -33,19 +33,19 @@ namespace ShorkSharp
         }
     }
 
-    internal class InvalidCharacterError : ShorkError
+    public class InvalidCharacterError : ShorkError
     {
         public InvalidCharacterError(string details, Position startPosition)
             : base("Invalid Character", details, startPosition) { }
     }
-    
-    internal class InvalidSyntaxError : ShorkError
+
+    public class InvalidSyntaxError : ShorkError
     {
         public InvalidSyntaxError(string details, Position startPosition)
             : base("Invalid Syntax", details, startPosition) { }
     }
-    
-    internal class InvalidEscapeSequenceError : ShorkError
+
+    public class InvalidEscapeSequenceError : ShorkError
     {
         public InvalidEscapeSequenceError(string details, Position startPosition)
             : base("Invalid Escape Sequence", details, startPosition) { }

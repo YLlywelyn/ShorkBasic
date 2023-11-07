@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ShorkSharp
 {
-    internal class Lexer
+    public class Lexer
     {
         static readonly string[] KEYWORDS =
         {
@@ -87,7 +87,7 @@ namespace ShorkSharp
                     tokens.Add(MakeIdentifierToken());
                 }
 
-                // Single character tokens
+                // Simple tokens
                 else
                 {
                     switch (currentChar)
@@ -115,7 +115,22 @@ namespace ShorkSharp
                             tokens.Add(new Token(TokenType.EXPONENT, position));
                             Advance();
                             break;
-                            
+
+                        case '!':
+                            (Token token, ShorkError error) = MakeNotEqualsToken();
+                            if (error != null) return (null, error);
+                            tokens.Add(token);
+                            break;
+                        case '=':
+                            tokens.Add(MakeEqualsToken());
+                            break;
+                        case '<':
+                            tokens.Add(MakeLessThanToken());
+                            break;
+                        case '>':
+                            tokens.Add(MakeGreaterThanToken());
+                            break;
+
                         case '.':
                             tokens.Add(new Token(TokenType.DOT, position));
                             Advance();
@@ -174,7 +189,7 @@ namespace ShorkSharp
                 }
                 numstring += currentChar;
                 Advance();
-			}
+            }
 
             return new Token(TokenType.NUMBER, decimal.Parse(numstring), startPosition, position);
         }
@@ -248,6 +263,57 @@ namespace ShorkSharp
                 TokenType ttype = KEYWORDS.Contains(idstr.ToLower()) ? TokenType.KEYWORD : TokenType.IDENTIFIER;
                 return new Token(ttype, idstr, startPosition, position);
             }
+        }
+
+        Token MakeEqualsToken()
+        {
+            Position startPosition = position.Copy();
+            TokenType ttype = TokenType.EQUALS;
+            Advance();
+            if (currentChar == '=')
+            {
+                ttype = TokenType.DOUBLE_EQUALS;
+                Advance();
+            }
+            return new Token(ttype, startPosition, position);
+        }
+
+        (Token, ShorkError) MakeNotEqualsToken()
+        {
+            Position startPosition = position.Copy();
+            Advance();
+            if (currentChar == '=')
+            {
+                Advance();
+                return (new Token(TokenType.NOT_EQUALS, startPosition, position), null);
+            }
+            return (null, new InvalidCharacterError("", position));
+        }
+
+        Token MakeLessThanToken()
+        {
+            Position startPosition = position.Copy();
+            TokenType ttype = TokenType.LESS_THAN;
+            Advance();
+            if (currentChar == '=')
+            {
+                ttype = TokenType.LESS_THAN_OR_EQUAL;
+                Advance();
+            }
+            return new Token(ttype, startPosition, position);
+        }
+
+        Token MakeGreaterThanToken()
+        {
+            Position startPosition = position.Copy();
+            TokenType ttype = TokenType.GREATER_THAN;
+            Advance();
+            if (currentChar == '=')
+            {
+                ttype = TokenType.GREATER_THAN_OR_EQUAL;
+                Advance();
+            }
+            return new Token(ttype, startPosition, position);
         }
     }
 }

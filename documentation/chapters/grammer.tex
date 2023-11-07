@@ -1,0 +1,15 @@
+%!TeX program = XeLatex
+%!TeX root = ../Shork Sharp.tex
+\section{Grammar}
+
+This is a notation for writing down the grammar of the language.  It uses regex syntax, with the components themselves being italicised.
+
+\begin{tabular}{|r|l|}
+\hline
+\textit{statements} & NEWLINE* \textit{statement} (NEWLINE+ \textit{statement})* NEWLINE* \\\hline
+\multirow{4}{*}{\textit{statement}} & KEYWORD:VAR IDENTIFIER = \textit{expression} \\
+                                    & KEYWORD:CONTINUE \\
+                                    & KEYWORD:BREAK \\
+                                    & \textit{expression} \\\hline
+\textit{expression} & \\\hline
+\end{tabular}

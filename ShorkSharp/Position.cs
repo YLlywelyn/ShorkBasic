@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ShorkSharp
 {
-    internal class Position
+    public class Position
     {
         public int index { get; protected set; } = 0;
         public int line { get; protected set; } = 0;

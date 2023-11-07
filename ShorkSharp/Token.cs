@@ -1,6 +1,6 @@
 ﻿namespace ShorkSharp
 {
-    internal class Token
+    public class Token
     {
         public TokenType type { get; protected set; }
         public dynamic value { get; protected set; }
@@ -8,28 +8,28 @@
         public Position startPosition { get; protected set; }
         public Position endPosition { get; protected set; }
 
-        internal Token(TokenType type, Position startPosition)
+        public Token(TokenType type, Position startPosition)
         {
             this.type = type;
             this.value = null;
             this.startPosition = startPosition.Copy();
             this.endPosition = startPosition.Copy();
         }
-        internal Token(TokenType type, Position startPosition, Position endPosition)
+        public Token(TokenType type, Position startPosition, Position endPosition)
         {
             this.type = type;
             this.value = null;
             this.startPosition = startPosition.Copy();
             this.endPosition = endPosition.Copy();
         }
-        internal Token(TokenType type, dynamic value, Position startPosition)
+        public Token(TokenType type, dynamic value, Position startPosition)
         {
             this.type = type;
             this.value = value;
             this.startPosition = startPosition.Copy();
             this.endPosition = startPosition.Copy();
         }
-        internal Token(TokenType type, dynamic value, Position startPosition, Position endPosition)
+        public Token(TokenType type, dynamic value, Position startPosition, Position endPosition)
         {
             this.type = type;
             this.value = value;
