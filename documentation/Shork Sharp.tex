@@ -6,11 +6,12 @@
 \usepackage{multirow}
 \usepackage{xcolor}
 
-\lstdefinelanguage[Sharp]{C}[Sharp]{C}
+\lstdefinelanguage[Sharp]{C}
 {
-	morestring=[b]'
+	morestring=[b]\'
 }
-\lstset
+
+\lstdefinestyle{mystyle}
 {
     language=[Sharp]C,
     numbers=left,
@@ -20,6 +21,7 @@
     showtabs=false,
     postbreak=\mbox{\textcolor{red}{$\hookrightarrow$}\space},
 }
+\lstset{style=mystyle}
 
 \newcommand{\langname}{Shork\textbf{\#}}
 
