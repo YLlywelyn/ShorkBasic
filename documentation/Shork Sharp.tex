@@ -6,22 +6,18 @@
 \usepackage{multirow}
 \usepackage{xcolor}
 
-\lstdefinelanguage[Sharp]{C}
-{
-	morestring=[b]\'
-}
-
-\lstdefinestyle{mystyle}
-{
+\lstset{
     language=[Sharp]C,
+    morestring=[b]',
     numbers=left,
     breaklines=true,
     breakatwhitespace=true,
     showspaces=false,
     showtabs=false,
     postbreak=\mbox{\textcolor{red}{$\hookrightarrow$}\space},
+    keywordstyle=\color{blue}\bfseries,
+    commentstyle=\color{gray}\itshape
 }
-\lstset{style=mystyle}
 
 \newcommand{\langname}{Shork\textbf{\#}}
 

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ShorkSharp
+﻿namespace ShorkSharp
 {
     public abstract class NodeBase
     {
@@ -30,7 +24,7 @@ namespace ShorkSharp
 
         public override string ToString()
         {
-            return string.Format("({0})", numToken.value);
+            return string.Format("({0})", numToken);
         }
     }
 
@@ -42,6 +36,27 @@ namespace ShorkSharp
             : base(strToken.startPosition, strToken.endPosition)
         {
             this.strToken = strToken;
+        }
+
+        public override string ToString()
+        {
+            return string.Format("({0})", strToken);
+        }
+    }
+
+    public class ListNode : NodeBase
+    {
+        public List<NodeBase> elementNodes;
+
+        public ListNode(IEnumerable<NodeBase> elementNodes, Position startPosition, Position endPosition)
+            : base(startPosition, endPosition)
+        {
+            this.elementNodes = elementNodes.ToList();
+        }
+
+        public override string ToString()
+        {
+            return string.Format("(List{{{0}}})", string.Join(", ", elementNodes));
         }
     }
 
@@ -56,6 +71,11 @@ namespace ShorkSharp
             this.varNameToken = varNameToken;
             this.valueNode = valueNode;
         }
+
+        public override string ToString()
+        {
+            return string.Format("({0} = {1})", varNameToken, valueNode);
+        }
     }
 
     public class VarAccessNode : NodeBase
@@ -66,6 +86,44 @@ namespace ShorkSharp
             : base(varNameToken.startPosition, varNameToken.endPosition)
         {
             this.varNameToken = varNameToken;
+        }
+
+        public override string ToString()
+        {
+            return string.Format("({0})", varNameToken);
+        }
+    }
+
+    public class BinaryOperationNode : NodeBase
+    {
+        public NodeBase leftNode { get; protected set; }
+        public Token operatorToken { get; protected set; }
+        public NodeBase rightNode { get; protected set; }
+
+        public BinaryOperationNode(NodeBase leftNode, Token operatorToken, NodeBase rightNode)
+            : base(leftNode.startPosition, rightNode.endPosition)
+        {
+            this.leftNode = leftNode;
+            this.operatorToken = operatorToken;
+            this.rightNode = rightNode;
+        }
+
+        public override string ToString()
+        {
+            return string.Format("({0} {1} {2})", leftNode, operatorToken, rightNode);
+        }
+    }
+
+    public class UnaryOperationNode : NodeBase
+    {
+        public Token operatorToken { get; protected set; }
+        public NodeBase operandNode { get; protected set; }
+
+        public UnaryOperationNode(Token operatorToken, NodeBase operandNode)
+            : base(operatorToken.startPosition, operandNode.endPosition)
+        {
+            this.operatorToken = operatorToken;
+            this.operandNode = operandNode;
         }
     }
 }

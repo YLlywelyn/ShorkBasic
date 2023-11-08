@@ -26,6 +26,7 @@
         
         DOT,
         COMMA,
+        ARROW,
 
         LPAREN,
         RPAREN,

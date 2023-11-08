@@ -1,10 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
 namespace ShorkSharp
 {
     public class Lexer
@@ -12,13 +5,23 @@ namespace ShorkSharp
         static readonly string[] KEYWORDS =
         {
             "var",
-            "func",
-            "while",
-            "do",
+            "and",
+            "or",
+            "not",
             "if",
             "then",
             "elif",
-            "else"
+            "else",
+            "for",
+            "to",
+            "step",
+            "func",
+            "while",
+            "do",
+            "end",
+            "return",
+            "continue",
+            "break"
         };
         static readonly char[] WHITESPACE = { ' ', '\t', '\r' };
         static readonly char[] DIGITS = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
@@ -100,8 +103,17 @@ namespace ShorkSharp
                             Advance();
                             break;
                         case '-':
-                            tokens.Add(new Token(TokenType.MINUS, position));
+                            TokenType ttype = TokenType.MINUS;
+                            Position startPosition = position.Copy();
                             Advance();
+
+                            if (currentChar == '>')
+                            {
+                                ttype = TokenType.ARROW;
+                                Advance();
+                            }
+
+                            tokens.Add(new Token(ttype, startPosition, position));
                             break;
                         case '*':
                             tokens.Add(new Token(TokenType.MULTIPLY, position));
