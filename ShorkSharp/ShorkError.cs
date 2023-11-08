@@ -1,6 +1,4 @@
-﻿using System.Text;
-
-namespace ShorkSharp
+﻿namespace ShorkSharp
 {
     public class ShorkError
     {
@@ -18,14 +16,12 @@ namespace ShorkSharp
 
         public override string ToString()
         {
-            StringBuilder sb = new StringBuilder();
-
-            sb.AppendFormat("{0}: {1}", errorName, details);
+            string output = string.Format("{0}: {1}", errorName, details);
 
             if (startPosition != null)
-                sb.AppendFormat("\nFile: '{0}', line {1}", startPosition.filename, startPosition.line+1);
+                output += string.Format("\nFile: '{0}', line {1}", startPosition.filename, startPosition.line+1);
 
-            return sb.ToString();
+            return output;
         }
     }
 

@@ -7,9 +7,24 @@ This is a notation for writing down the grammar of the language.  It uses regex 
 \begin{tabular}{|r|l|}
 \hline
 \textit{statements} & NEWLINE* \textit{statement} (NEWLINE+ \textit{statement})* NEWLINE* \\\hline
-\multirow{4}{*}{\textit{statement}} & KEYWORD:VAR IDENTIFIER = \textit{expression} \\
+
+\multirow{4}{*}{\textit{statement}} & KEYWORD:RETURN \textit{expression}? \\
                                     & KEYWORD:CONTINUE \\
                                     & KEYWORD:BREAK \\
                                     & \textit{expression} \\\hline
-\textit{expression} & \\\hline
+                                    
+\multirow{2}{*}{\textit{expression}} & KEYWORD:VAR IDENTIFIER = \textit{expression} \\
+                                     & \makecell{\textit{comparision\_expression} ((KEYWORD:AND | KEYWORD:OR)\\ \textit{comparision\_expression})*} \\\hline
+
+\multirow{2}{*}{\textit{comparision\_expression}} & KEYWORD:NOT \textit{comparision\_expression} \\
+                                                  & \textit{arithmatic\_expression} ((==|!=|<|<=|>|>=) \textit{arithmatic\_expression})* \\\hline
+
+\textit{arithmatic\_expression} & \textit{term} ((+|-) \textit{term})* \\\hline
+
+\textit{term} & \textit{factor} ((\textbackslash*|/) \textit{factor})* \\\hline
+
+\multirow{2}{*}{\textit{factor}} & (+|-)? \textit{factor} \\
+                                 & \textit{exponent} \\\hline
+
+\textit{exponent} & \textit{call} (\^{} \textit{factor})* \\\hline
 \end{tabular}

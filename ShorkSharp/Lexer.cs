@@ -1,7 +1,13 @@
 namespace ShorkSharp
 {
+    /// <summary>
+    /// The lexer takes in the input text and converts it into a series of tokens.
+    /// </summary>
     public class Lexer
     {
+        /// <summary>
+        /// The words recognised as keywords.
+        /// </summary>
         static readonly string[] KEYWORDS =
         {
             "var",
@@ -54,6 +60,10 @@ namespace ShorkSharp
                 currentChar = '\0';
         }
 
+        /// <summary>
+        /// Runs the lexer and returns the result.
+        /// </summary>
+        /// <returns>If an error occured, Token[] will be null and ShorkError will contain the error.  Otherwise Token[] will contain the tokens and ShorkError will be null.</returns>
         public (Token[], ShorkError?) Lex()
         {
             if (input.Length == 0)
