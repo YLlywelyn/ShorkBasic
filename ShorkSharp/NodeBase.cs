@@ -12,6 +12,22 @@
         }
     }
 
+    public class CodeBlockNode : NodeBase
+    {
+        public List<NodeBase> statements;
+
+        public CodeBlockNode(IEnumerable<NodeBase> statements, Position startPosition, Position endPosition)
+            : base(startPosition, endPosition)
+        {
+            this.statements = statements.ToList();
+        }
+
+        public override string ToString()
+        {
+            return string.Format("{{{0}}}", string.Join(", ", statements));
+        }
+    }
+
     public class NumberNode : NodeBase
     {
         public Token numToken { get; protected set; }
@@ -56,7 +72,7 @@
 
         public override string ToString()
         {
-            return string.Format("(List{{{0}}})", string.Join(", ", elementNodes));
+            return string.Format("[{0}]", string.Join(", ", elementNodes));
         }
     }
 
