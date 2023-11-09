@@ -142,4 +142,83 @@
             this.operandNode = operandNode;
         }
     }
+
+    public class IfNode : NodeBase
+    {
+        public (NodeBase, NodeBase)[] caseNodes { get; protected set; }
+        public NodeBase elseNode { get; protected set; }
+
+        public IfNode((NodeBase, NodeBase)[] caseNodes)
+            : base(caseNodes[0].Item1.startPosition, caseNodes[^1].Item2.endPosition)
+        {
+            this.caseNodes = caseNodes;
+        }
+        public IfNode((NodeBase, NodeBase)[] caseNodes, NodeBase elseNode)
+            : base(caseNodes[0].Item1.startPosition, elseNode.endPosition)
+        {
+            this.caseNodes = caseNodes;
+            this.elseNode = elseNode;
+        }
+    }
+
+    public class ForNode : NodeBase
+    {
+        public Token varNameToken { get; protected set; }
+        public NodeBase startValueNode { get; protected set; }
+        public NodeBase endValueNode { get; protected set; }
+        public NodeBase stepValueNode { get; protected set; }
+        public NodeBase bodyNode { get; protected set; }
+        public bool shouldReturnNull { get; protected set; }
+
+        public ForNode(Token varNameToken,
+                       NodeBase startValueNode,
+                       NodeBase endValueNode,
+                       NodeBase stepValueNode,
+                       NodeBase bodyNode,
+                       bool shouldReturnNull)
+            : base(varNameToken.startPosition, bodyNode.endPosition)
+        {
+            this.varNameToken = varNameToken;
+            this.startValueNode = startValueNode;
+            this.endValueNode = endValueNode;
+            this.stepValueNode = stepValueNode;
+            this.bodyNode = bodyNode;
+            this.shouldReturnNull = shouldReturnNull;
+        }
+    }
+
+    public class WhileNode : NodeBase
+    {
+        public NodeBase conditionNode { get; protected set; }
+        public NodeBase bodyNode { get; protected set; }
+        public bool shouldReturnNull { get; protected set; }
+
+        public WhileNode(NodeBase conditionNode, NodeBase bodyNode, bool shouldReturnNull)
+            : base(conditionNode.startPosition, bodyNode.endPosition)
+        {
+            this.conditionNode = conditionNode;
+            this.bodyNode = bodyNode;
+            this.shouldReturnNull = shouldReturnNull;
+        }
+    }
+
+    public class FunctionDefinitionNode : NodeBase
+    {
+        public Token varNameToken { get; protected set; }
+        public Token[] argNameTokens { get; protected set; }
+        public NodeBase bodyNode { get; protected set; }
+        public bool shouldAutoReturn { get; protected set; }
+
+        public FunctionDefinitionNode(Token varNameToken,
+                                      Token[] argNameTokens,
+                                      NodeBase bodyNode,
+                                      bool shouldAutoReturn)
+            : base(varNameToken.startPosition, bodyNode.endPosition)
+        {
+            this.varNameToken = varNameToken;
+            this.argNameTokens = argNameTokens;
+            this.bodyNode = bodyNode;
+            this.shouldAutoReturn = shouldAutoReturn;
+        }
+    }
 }
