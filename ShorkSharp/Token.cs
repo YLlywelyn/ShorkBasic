@@ -37,8 +37,10 @@
             this.endPosition = endPosition.Copy();
         }
 
-        public bool Matches(TokenType type)
+        public bool Matches(params TokenType[] types)
         {
+            foreach (TokenType ttpe in types)
+                if (this.type == type) return true;
             return this.type == type;
         }
         public bool Matches(TokenType type, dynamic value)

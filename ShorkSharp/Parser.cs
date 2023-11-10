@@ -188,12 +188,12 @@
 
         protected ParseResult ParseArithmaticExpression()
         {
-            throw new NotImplementedException();
+            return ParseBinaryOperation(ParseTerm, new TokenType[] { TokenType.PLUS, TokenType.MINUS });
         }
 
         protected ParseResult ParseTerm()
         {
-            throw new NotImplementedException();
+            return ParseBinaryOperation(ParseFactor, new TokenType[] { TokenType.MULTIPLY, TokenType.DIVIDE });
         }
 
         protected ParseResult ParseFactor()
