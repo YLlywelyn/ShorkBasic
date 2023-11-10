@@ -157,11 +157,7 @@
 
             else
             {
-                NodeBase node = result.Register(ParseBinaryOperation(ParseComparisonExpression,
-                                                                     new (TokenType, string)[] {
-                                                                         (TokenType.KEYWORD, "and"),
-                                                                         (TokenType.KEYWORD, "or")
-                                                                     }));
+                NodeBase node = result.Register(ParseBinaryOperation(ParseComparisonExpression, new (TokenType, string)[] { (TokenType.KEYWORD, "and"), (TokenType.KEYWORD, "or") }));
                 if (result.error != null)
                     return result.Failure(new InvalidSyntaxError("Expected 'VAR', 'IF', 'FOR', 'WHILE', 'FUNC', number, identifier, '+', '-', '(', '[' or 'NOT'", currentToken.startPosition));
                 return result.Success(node);
@@ -170,7 +166,24 @@
 
         protected ParseResult ParseComparisonExpression()
         {
-            throw new NotImplementedException();
+            ParseResult result = new ParseResult();
+            NodeBase node;
+
+            if (currentToken.Matches(TokenType.KEYWORD, "not"))
+            {
+                Token operatorToken = currentToken;
+                result.RegisterAdvancement();
+                Advance();
+
+                node = result.Register(ParseComparisonExpression());
+                if (result.error != null) return result;
+                return result.Success(node);
+            }
+
+            node = result.Register(ParseBinaryOperation(ParseArithmaticExpression, new TokenType[] { TokenType.DOUBLE_EQUALS, TokenType.NOT_EQUALS, TokenType.LESS_THAN, TokenType.GREATER_THAN, TokenType.LESS_THAN_OR_EQUAL, TokenType.GREATER_THAN_OR_EQUAL }));
+            if (result.error != null)
+                return result.Failure(new InvalidSyntaxError("Expected number, identifier, '+', '-', '(', '[', 'IF', 'FOR', 'WHILE', 'FUNC' or 'NOT'", currentToken.startPosition));
+            return result.Success(node);
         }
 
         protected ParseResult ParseArithmaticExpression()
