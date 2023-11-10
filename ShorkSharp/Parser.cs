@@ -86,12 +86,86 @@
 
         protected ParseResult ParseStatement()
         {
-            throw new NotImplementedException();
+            ParseResult result = new ParseResult();
+            Position startPosition = currentToken.startPosition.Copy();
+
+            if (currentToken.Matches(TokenType.KEYWORD, "return"))
+            {
+                result.RegisterAdvancement();
+                Advance();
+
+                NodeBase expression = result.TryRegister(ParseExpression());
+                if (expression == null)
+                {
+                    Reverse(result.toReverseCount);
+                    return result.Success(new ReturnNode(startPosition, currentToken.endPosition));
+                }
+                else
+                    return result.Success(new ReturnNode(expression));
+            }
+
+            else if (currentToken.Matches(TokenType.KEYWORD, "continue"))
+            {
+                result.RegisterAdvancement();
+                Advance();
+                return result.Success(new ContinueNode(startPosition, currentToken.endPosition));
+            }
+
+            else if (currentToken.Matches(TokenType.KEYWORD, "break"))
+            {
+                result.RegisterAdvancement();
+                Advance();
+                return result.Success(new BreakNode(startPosition, currentToken.endPosition));
+            }
+
+            else
+            {
+                NodeBase expression = result.Register(ParseExpression());
+                if (result.error != null)
+                    return result.Failure(new InvalidSyntaxError("Expected 'RETURN', 'CONTINUE', 'BREAK', 'VAR', 'IF', 'FOR', 'WHILE', 'FUN', int, float, identifier, '+', '-', '(', '[' or 'NOT'", currentToken.startPosition));
+
+                return result.Success(expression);
+            }
         }
 
         protected ParseResult ParseExpression()
         {
-            throw new NotImplementedException();
+            ParseResult result = new ParseResult();
+
+            if (currentToken.Matches(TokenType.KEYWORD, "var"))
+            {
+                result.RegisterAdvancement();
+                Advance();
+
+                if (currentToken.type != TokenType.IDENTIFIER)
+                    return result.Failure(new InvalidSyntaxError("Expected identifier", currentToken.startPosition));
+
+                Token varNameToken = currentToken;
+                result.RegisterAdvancement();
+                Advance();
+
+                if (currentToken.type != TokenType.EQUALS)
+                    return result.Failure(new InvalidSyntaxError("Expected '='", currentToken.startPosition));
+
+                result.RegisterAdvancement();
+                Advance();
+
+                NodeBase expression = result.Register(ParseExpression());
+                if (result.error != null) return result;
+                return result.Success(new VarAssignNode(varNameToken, expression));
+            }
+
+            else
+            {
+                NodeBase node = result.Register(ParseBinaryOperation(ParseComparisonExpression,
+                                                                     new (TokenType, string)[] {
+                                                                         (TokenType.KEYWORD, "and"),
+                                                                         (TokenType.KEYWORD, "or")
+                                                                     }));
+                if (result.error != null)
+                    return result.Failure(new InvalidSyntaxError("Expected 'VAR', 'IF', 'FOR', 'WHILE', 'FUNC', number, identifier, '+', '-', '(', '[' or 'NOT'", currentToken.startPosition));
+                return result.Success(node);
+            }
         }
 
         protected ParseResult ParseComparisonExpression()
@@ -134,12 +208,12 @@
             throw new NotImplementedException();
         }
 
-        // TODO: ParseIfExpression
+        /* TODO: ParseIfExpression
 
         protected ParseResult ParseStatement()
         {
             throw new NotImplementedException();
-        }
+        }*/
 
         protected ParseResult ParseForExpression()
         {
@@ -172,6 +246,33 @@
                 return result;
 
             while (operations.Contains(currentToken.type))
+            {
+                Token operatorToken = currentToken;
+                result.RegisterAdvancement();
+                Advance();
+
+                NodeBase rightNode = result.Register(rightFunc());
+                if (result.error != null)
+                    return result;
+
+                leftNode = new BinaryOperationNode(leftNode, operatorToken, rightNode);
+            }
+
+            return result.Success(leftNode);
+        }
+        protected ParseResult ParseBinaryOperation(BinaryOperationDelegate leftFunc, (TokenType, string)[] operations)
+        {
+            return ParseBinaryOperation(leftFunc, operations, leftFunc);
+        }
+        protected ParseResult ParseBinaryOperation(BinaryOperationDelegate leftFunc, (TokenType, string)[] operations, BinaryOperationDelegate rightFunc)
+        {
+            ParseResult result = new ParseResult();
+
+            NodeBase leftNode = result.Register(leftFunc());
+            if (result.error != null)
+                return result;
+
+            while (operations.Contains((currentToken.type, (string)currentToken.value)))
             {
                 Token operatorToken = currentToken;
                 result.RegisterAdvancement();

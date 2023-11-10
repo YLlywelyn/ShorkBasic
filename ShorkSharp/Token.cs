@@ -37,6 +37,17 @@
             this.endPosition = endPosition.Copy();
         }
 
+        public bool Matches(TokenType type)
+        {
+            return this.type == type;
+        }
+        public bool Matches(TokenType type, dynamic value)
+        {
+            if (type == TokenType.KEYWORD)
+                return this.type == type && ((string)this.value).ToLower() == ((string)value).ToLower();
+            return this.type == type && this.value == value;
+        }
+
         public override string ToString()
         {
             if (value == null)

@@ -221,4 +221,42 @@
             this.shouldAutoReturn = shouldAutoReturn;
         }
     }
+
+    public class CallNode : NodeBase
+    {
+        public NodeBase nodeToCall { get; protected set; }
+        public NodeBase[] argumentNodes { get; protected set; }
+
+        public CallNode(NodeBase nodeToCall, NodeBase[] argumentNodes)
+            : base(nodeToCall.startPosition, (argumentNodes.Length > 0) ? argumentNodes[^1].endPosition : nodeToCall.endPosition)
+        {
+            this.nodeToCall = nodeToCall;
+            this.argumentNodes = argumentNodes;
+        }
+    }
+
+    public class ReturnNode : NodeBase
+    {
+        public NodeBase nodeToReturn { get; protected set; }
+
+        public ReturnNode(Position startPosition, Position endPosition)
+            : base(startPosition, endPosition) { }
+        public ReturnNode(NodeBase nodeToReturn)
+            : base(nodeToReturn.startPosition, nodeToReturn.endPosition)
+        {
+            this.nodeToReturn = nodeToReturn;
+        }
+    }
+
+    public class ContinueNode : NodeBase
+    {
+        public ContinueNode(Position startPosition, Position endPosition)
+            : base(startPosition, endPosition) { }
+    }
+
+    public class BreakNode : NodeBase
+    {
+        public BreakNode(Position startPosition, Position endPosition)
+            : base(startPosition, endPosition) { }
+    }
 }
