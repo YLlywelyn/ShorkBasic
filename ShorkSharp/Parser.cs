@@ -198,39 +198,273 @@
 
         protected ParseResult ParseFactor()
         {
-            throw new NotImplementedException();
+            ParseResult result = new ParseResult();
+
+            if (currentToken.Matches(TokenType.PLUS, TokenType.MINUS))
+            {
+                Token operandToken = currentToken;
+                result.RegisterAdvancement();
+                Advance();
+                NodeBase factor = result.Register(ParseFactor());
+                if (result.error != null) return result;
+                return result.Success(new UnaryOperationNode(operandToken, factor));
+            }
+
+            return ParseExponent();
         }
 
         protected ParseResult ParseExponent()
         {
-            throw new NotImplementedException();
+            return ParseBinaryOperation(ParseCall, new TokenType[] { TokenType.EXPONENT }, ParseFactor);
         }
 
         protected ParseResult ParseCall()
         {
-            throw new NotImplementedException();
+            ParseResult result = new ParseResult();
+
+             NodeBase atom = result.Register(ParseAtom());
+            if (result.error != null) return result;
+
+            if (currentToken.type == TokenType.LPAREN)
+            {
+                result.RegisterAdvancement();
+                Advance();
+
+                List<NodeBase> args = new List<NodeBase>();
+
+                if (currentToken.type == TokenType.RPAREN)
+                {
+                    result.RegisterAdvancement();
+                    Advance();
+                }
+                else
+                {
+                    args.Add(result.Register(ParseExpression()));
+                    if (result.error != null)
+                        return result.Failure(new InvalidSyntaxError("Expected ')', 'VAR', 'IF', 'FOR', 'WHILE', 'FUNC', number, identifier, '+', '-', '(', '[' or 'NOT'", currentToken.startPosition));
+
+                    while (currentToken.type == TokenType.COMMA)
+                    {
+                        result.RegisterAdvancement();
+                        Advance();
+
+                        args.Add(result.Register(ParseExpression()));
+                        if (result.error != null) return result;
+                    }
+
+                    if (currentToken.type != TokenType.RPAREN)
+                        return result.Failure(new InvalidSyntaxError("Expected ',' or ')'", currentToken.startPosition));
+
+                    result.RegisterAdvancement();
+                    Advance();
+                }
+
+                return result.Success(new CallNode(atom, args.ToArray()));
+            }
+            return result.Success(atom);
         }
 
         protected ParseResult ParseAtom()
         {
-            throw new NotImplementedException();
+            ParseResult result = new ParseResult();
+
+            if (currentToken.type == TokenType.NUMBER)
+            {
+                result.RegisterAdvancement();
+                Advance();
+                return result.Success(new NumberNode(currentToken));
+            }
+
+            else if (currentToken.type == TokenType.STRING)
+            {
+                result.RegisterAdvancement();
+                Advance();
+                return result.Success(new StringNode(currentToken));
+            }
+
+            else if (currentToken.type == TokenType.IDENTIFIER)
+            {
+                result.RegisterAdvancement();
+                Advance();
+                return result.Success(new VarAccessNode(currentToken));
+            }
+
+            else if (currentToken.type == TokenType.LPAREN)
+            {
+                result.RegisterAdvancement();
+                Advance();
+
+                NodeBase expression = result.Register(ParseExpression());
+                if (result.error != null) return result;
+
+                if (currentToken.type == TokenType.RPAREN)
+                {
+                    result.RegisterAdvancement();
+                    Advance();
+                    return result.Success(expression);
+                }
+                else return result.Failure(new InvalidSyntaxError("Expected ')'", currentToken.startPosition));
+            }
+
+            else if (currentToken.type == TokenType.LBRACKET)
+            {
+                NodeBase list = result.Register(ParseListExpression());
+                if (result.error != null) return result;
+                return result.Success(list);
+            }
+
+            else if (currentToken.Matches(TokenType.KEYWORD, "if"))
+            {
+                NodeBase ifNode = result.Register(ParseIfExpression());
+                if (result.error != null) return result;
+                return result.Success(ifNode);
+            }
+
+            else if (currentToken.Matches(TokenType.KEYWORD, "for"))
+            {
+                NodeBase forNode = result.Register(ParseForExpression());
+                if (result.error != null) return result;
+                return result.Success(forNode);
+            }
+
+            else if (currentToken.Matches(TokenType.KEYWORD, "while"))
+            {
+                NodeBase whileNode = result.Register(ParseWhileExpression());
+                if (result.error != null) return result;
+                return result.Success(whileNode);
+            }
+
+            else if (currentToken.Matches(TokenType.KEYWORD, "func"))
+            {
+                NodeBase functionDefinition = result.Register(ParseFunctionDefinition());
+                if (result.error != null) return result;
+                return result.Success(functionDefinition);
+            }
+
+            else return result.Failure(new InvalidSyntaxError("Expected number, identifier, '+', '-', '(', '[', IF', 'FOR', 'WHILE', 'FUNC'", currentToken.startPosition));
         }
 
         protected ParseResult ParseListExpression()
         {
+            ParseResult result = new ParseResult();
+
+            List<NodeBase> elements = new List<NodeBase>();
+            Position startPosition = currentToken.startPosition.Copy();
+
+            if (currentToken.type != TokenType.LBRACKET)
+                return result.Failure(new InvalidSyntaxError("Expected '['", currentToken.startPosition));
+
+            result.RegisterAdvancement();
+            Advance();
+
+            if (currentToken.type == TokenType.RBRACKET)
+            {
+                result.RegisterAdvancement();
+                Advance();
+            }
+            else
+            {
+                elements.Add(result.Register(ParseExpression()));
+                if (result.error != null)
+                    return result.Failure(new InvalidSyntaxError("Expected ']', 'VAR', 'IF', 'FOR', 'WHILE', 'FUNC', number, identifier, '+', '-', '(', '[' or 'NOT'", currentToken.startPosition));
+
+                while (currentToken.type == TokenType.COMMA)
+                {
+                    result.RegisterAdvancement();
+                    Advance();
+
+                    elements.Add(result.Register(ParseExpression()));
+                    if (result.error != null) return result;
+                }
+
+                if (currentToken.type != TokenType.RBRACKET)
+                    return result.Failure(new InvalidSyntaxError("Expected ']'", currentToken.startPosition));
+
+                result.RegisterAdvancement();
+                Advance();
+            }
+
+            return result.Success(new ListNode(elements, startPosition, currentToken.endPosition));
+        }
+
+        // TODO: ParseIfExpression
+        protected ParseResult ParseIfExpression()
+        {
             throw new NotImplementedException();
         }
 
-        /* TODO: ParseIfExpression
-
-        protected ParseResult ParseStatement()
-        {
-            throw new NotImplementedException();
-        }*/
-
         protected ParseResult ParseForExpression()
         {
-            throw new NotImplementedException();
+            ParseResult result = new ParseResult();
+
+            if (!currentToken.Matches(TokenType.KEYWORD, "for"))
+                return result.Failure(new InvalidSyntaxError("Expected 'FOR'", currentToken.startPosition));
+
+            result.RegisterAdvancement();
+            Advance();
+
+            if (currentToken.type != TokenType.IDENTIFIER)
+                return result.Failure(new InvalidSyntaxError("Expected identifier", currentToken.startPosition));
+
+            Token varNameToken = currentToken;
+            result.RegisterAdvancement();
+            Advance();
+
+            if (currentToken.type != TokenType.EQUALS)
+                return result.Failure(new InvalidSyntaxError("Expected '='", currentToken.startPosition));
+
+            result.RegisterAdvancement();
+            Advance();
+
+            NodeBase startValue = result.Register(ParseExpression());
+            if (result.error != null) return result;
+
+            if (!currentToken.Matches(TokenType.KEYWORD, "to"))
+                return result.Failure(new InvalidSyntaxError("Expected 'TO'", currentToken.startPosition));
+
+            result.RegisterAdvancement();
+            Advance();
+
+            NodeBase endValue = result.Register(ParseExpression());
+            if (result.error != null) return result;
+
+            NodeBase stepValue = null;
+            if (currentToken.Matches(TokenType.KEYWORD, "step"))
+            {
+                result.RegisterAdvancement();
+                Advance();
+
+                stepValue = result.Register(ParseExpression());
+                if (result.error != null) return result;
+            }
+
+            if (!currentToken.Matches(TokenType.KEYWORD, "do"))
+                return result.Failure(new InvalidSyntaxError("Expected 'DO'", currentToken.startPosition));
+
+            result.RegisterAdvancement();
+            Advance();
+
+            if (currentToken.type == TokenType.NEWLINE)
+            {
+                result.RegisterAdvancement();
+                Advance();
+
+                NodeBase bodyNodes = result.Register(ParseStatements());
+                if (result.error != null) return result;
+
+                if (!currentToken.Matches(TokenType.KEYWORD, "end"))
+                    return result.Failure(new InvalidSyntaxError("Expected 'END'", currentToken.startPosition));
+
+                result.RegisterAdvancement();
+                Advance();
+
+                return result.Success(new ForNode(varNameToken, startValue, endValue, stepValue, bodyNodes, true));
+            }
+
+            NodeBase bodyNode = result.Register(ParseStatement());
+            if (result.error != null) return result;
+
+            return result.Success(new ForNode(varNameToken, startValue, endValue, stepValue, bodyNode, false));
         }
 
         protected ParseResult ParseWhileExpression()
