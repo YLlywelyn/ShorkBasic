@@ -469,7 +469,47 @@
 
         protected ParseResult ParseWhileExpression()
         {
-            throw new NotImplementedException();
+            ParseResult result = new ParseResult();
+
+            if (!currentToken.Matches(TokenType.KEYWORD, "while"))
+                return result.Failure(new InvalidSyntaxError("Expected 'WHILE'", currentToken.startPosition));
+
+            result.RegisterAdvancement();
+            Advance();
+
+            NodeBase condition = result.Register(ParseExpression());
+            if (result.error != null) return result;
+
+            if (!currentToken.Matches(TokenType.KEYWORD, "do"))
+                return result.Failure(new InvalidSyntaxError("Expected 'do'", currentToken.startPosition));
+
+            result.RegisterAdvancement();
+            Advance();
+
+            NodeBase bodyNode;
+            if (currentToken.type == TokenType.NEWLINE)
+            {
+                result.RegisterAdvancement();
+                Advance();
+
+                bodyNode = result.Register(ParseStatements());
+                if (result.error != null) return result;
+
+                if (!currentToken.Matches(TokenType.KEYWORD, "end"))
+                    return result.Failure(new InvalidSyntaxError("Expected 'END'", currentToken.startPosition));
+
+                result.RegisterAdvancement();
+                Advance();
+
+                return result.Success(new WhileNode(condition, bodyNode, true));
+            }
+            else
+            {
+                bodyNode = result.Register(ParseStatement());
+                if (result.error != null) return result;
+
+                return result.Success(new WhileNode(condition, bodyNode, false));
+            }
         }
 
         protected ParseResult ParseFunctionDefinition()
