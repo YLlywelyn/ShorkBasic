@@ -387,7 +387,6 @@
             return result.Success(new ListNode(elements, startPosition, currentToken.endPosition));
         }
 
-        // TODO: ParseIfExpression
         protected ParseResult ParseIfExpression()
         {
             throw new NotImplementedException();
@@ -514,7 +513,95 @@
 
         protected ParseResult ParseFunctionDefinition()
         {
-            throw new NotImplementedException();
+            ParseResult result = new ParseResult();
+
+            if (!currentToken.Matches(TokenType.KEYWORD, "func"))
+                return result.Failure(new InvalidSyntaxError("Expected 'FUNC'", currentToken.startPosition));
+
+            result.RegisterAdvancement();
+            Advance();
+
+            Token varNameToken = null;
+            if (currentToken.type == TokenType.IDENTIFIER)
+            {
+                varNameToken = currentToken;
+
+                result.RegisterAdvancement();
+                Advance();
+
+                if (currentToken.type != TokenType.LPAREN)
+                    return result.Failure(new InvalidSyntaxError("Expected '('", currentToken.startPosition));
+            }
+            else
+            {
+                if (currentToken.type != TokenType.LPAREN)
+                    return result.Failure(new InvalidSyntaxError("Expected identifier or '('", currentToken.startPosition));
+            }
+
+            result.RegisterAdvancement();
+            Advance();
+
+            List<Token> argTokens = new List<Token>();
+
+            if (currentToken.type == TokenType.IDENTIFIER)
+            {
+                argTokens.Add(currentToken);
+                result.RegisterAdvancement();
+                Advance();
+
+                while (currentToken.type == TokenType.COMMA)
+                {
+                    result.RegisterAdvancement();
+                    Advance();
+
+                    if (currentToken.type != TokenType.IDENTIFIER)
+                        return result.Failure(new InvalidSyntaxError("Expected identifier", currentToken.startPosition));
+
+                    argTokens.Add(currentToken);
+                    result.RegisterAdvancement();
+                    Advance();
+                }
+
+                if (currentToken.type != TokenType.RPAREN)
+                    return result.Failure(new InvalidSyntaxError("Expected ',' or ')'", currentToken.startPosition));
+            }
+            else
+            {
+                if (currentToken.type != TokenType.RPAREN)
+                    return result.Failure(new InvalidSyntaxError("Expected identifier or ')'", currentToken.startPosition));
+            }
+
+            result.RegisterAdvancement();
+            Advance();
+
+            NodeBase bodyNode;
+            if (currentToken.type == TokenType.ARROW)
+            {
+                result.RegisterAdvancement();
+                Advance();
+
+                bodyNode = result.Register(ParseExpression());
+                if (result.error != null) return result;
+
+                return result.Success(new FunctionDefinitionNode(varNameToken, argTokens.ToArray(), bodyNode, true));
+            }
+
+            if (currentToken.type != TokenType.NEWLINE)
+                return result.Failure(new InvalidSyntaxError("Expected '->' or newline", currentToken.startPosition));
+
+            result.RegisterAdvancement();
+            Advance();
+
+            bodyNode = result.Register(ParseStatements());
+            if (result.error != null) return result;
+
+            if (!currentToken.Matches(TokenType.KEYWORD, "end"))
+                return result.Failure(new InvalidSyntaxError("Expected 'END'", currentToken.startPosition));
+
+            result.RegisterAdvancement();
+            Advance();
+
+            return result.Success(new FunctionDefinitionNode(varNameToken, argTokens.ToArray(), bodyNode, false));
         }
 
         //######################################
