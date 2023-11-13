@@ -389,8 +389,11 @@
 
         protected ParseResult ParseIfExpression()
         {
-            throw new NotImplementedException();
+            ParseResult result = new ParseResult();
 
+            List<(NodeBase condition, NodeBase body, bool shouldReturnNull)> cases = new List<(NodeBase condition, NodeBase body, bool shouldReturnNull)>();
+            (NodeBase condition, NodeBase body, bool shouldReturnNull) currentCase = (null, null, false);
+            (NodeBase body, bool shouldReturnNull) elseCase = (null, false);
 
         }
 

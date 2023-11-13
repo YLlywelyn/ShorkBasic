@@ -145,16 +145,16 @@
 
     public class IfNode : NodeBase
     {
-        public (NodeBase, NodeBase)[] caseNodes { get; protected set; }
-        public NodeBase elseNode { get; protected set; }
+        public (NodeBase condition, NodeBase body, bool shouldReturnNull)[] caseNodes { get; protected set; }
+        public (NodeBase body, bool shouldReturnNull) elseNode { get; protected set; }
 
-        public IfNode((NodeBase, NodeBase)[] caseNodes)
-            : base(caseNodes[0].Item1.startPosition, caseNodes[^1].Item2.endPosition)
+        public IfNode((NodeBase condition, NodeBase body, bool shouldReturnNull)[] caseNodes)
+            : base(caseNodes[0].condition.startPosition, caseNodes[^1].body.endPosition)
         {
             this.caseNodes = caseNodes;
         }
-        public IfNode((NodeBase, NodeBase)[] caseNodes, NodeBase elseNode)
-            : base(caseNodes[0].Item1.startPosition, elseNode.endPosition)
+        public IfNode((NodeBase condition, NodeBase body, bool shouldReturnNull)[] caseNodes, (NodeBase body, bool shouldReturnNull) elseNode)
+            : base(caseNodes[0].condition.startPosition, elseNode.body.endPosition)
         {
             this.caseNodes = caseNodes;
             this.elseNode = elseNode;
