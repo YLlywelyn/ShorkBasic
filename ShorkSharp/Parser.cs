@@ -389,22 +389,14 @@
 
         protected ParseResult ParseIfExpression()
         {
-            ParseResult result = new ParseResult();
+            ParseIfResult result = new ParseIfResult();
 
             List<(NodeBase condition, NodeBase body, bool shouldReturnNull)> cases = new List<(NodeBase condition, NodeBase body, bool shouldReturnNull)>();
-            (ParseResult condition, ParseResult body, bool shouldReturnNull) currentCase = (null, null, false);
-            (NodeBase body, bool shouldReturnNull) elseCase = (null, false);
-            
-            currentCase = ParseIfCase('if');
-            result.Register(currentCase.condition);
-            if (result.error != null) return result;
-            result.Register(currentCase.body);
-            if (result.error != null) return result;
-            cases.Add(currentCase);
         }
-        protected (ParseResult condition, ParseResult body, bool shouldReturnNull) ParseIfCase(string ifKeyword)
+        protected ParseIfResult ParseIfCase(string ifKeyword)
         {
-            
+            ParseIfResult result = new ParseIfResult();
+
         }
 
         protected ParseResult ParseForExpression()

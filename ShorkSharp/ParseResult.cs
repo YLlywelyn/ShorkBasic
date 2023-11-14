@@ -47,4 +47,28 @@
             return this;
         }
     }
+
+    public class ParseIfResult : ParseResult
+    {
+        public NodeBase condition { get; protected set; }
+        public NodeBase body { get; protected set; }
+        public bool shouldReturnNull;
+
+        public (NodeBase condition, NodeBase body) Register(ParseResult condition, ParseResult body)
+        {
+            lastAdvanceCount = condition.advanceCount + body.advanceCount;
+            this.advanceCount += condition.advanceCount + body.advanceCount;
+            if (condition.error != null) this.error = condition.error;
+            else if (body.error != null) this.error = body.error;
+            return (condition.node, body.node);
+        }
+
+        public ParseIfResult Success(NodeBase condition, NodeBase body, bool shouldReturnNull)
+        {
+            this.condition = condition;
+            this.body = body;
+            this.shouldReturnNull = shouldReturnNull;
+            return this;
+        }
+    }
 }
