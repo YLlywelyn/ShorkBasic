@@ -145,19 +145,22 @@
 
     public class IfNode : NodeBase
     {
-        public (NodeBase condition, NodeBase body, bool shouldReturnNull)[] caseNodes { get; protected set; }
-        public (NodeBase body, bool shouldReturnNull) elseNode { get; protected set; }
+        public IfCase[] cases { get; protected set; }
+        public IfCase? elseCase { get; protected set; }
 
-        public IfNode((NodeBase condition, NodeBase body, bool shouldReturnNull)[] caseNodes)
-            : base(caseNodes[0].condition.startPosition, caseNodes[^1].body.endPosition)
+        public IfNode(IfCase[] cases)
+            : base(cases[0].condition.startPosition, cases[^1].body.endPosition)
         {
-            this.caseNodes = caseNodes;
-        }
-        public IfNode((NodeBase condition, NodeBase body, bool shouldReturnNull)[] caseNodes, (NodeBase body, bool shouldReturnNull) elseNode)
-            : base(caseNodes[0].condition.startPosition, elseNode.body.endPosition)
-        {
-            this.caseNodes = caseNodes;
-            this.elseNode = elseNode;
+            if (cases.Length > 1 && cases[^1].condition == null)
+            {
+                this.cases = cases.SkipLast(1).ToArray();
+                this.elseCase = cases[^1];
+            }
+            else
+            {
+                this.cases = cases;
+                this.elseCase = null;
+            }
         }
     }
 

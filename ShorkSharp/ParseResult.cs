@@ -3,7 +3,7 @@
     public class ParseResult
     {
         public ShorkError error { get; protected set; }
-        public NodeBase node { get; protected set; }
+        public dynamic node { get; protected set; }
         public int advanceCount { get; protected set; } = 0;
         public int lastAdvanceCount { get; protected set; } = 0;
         public int toReverseCount { get; protected set; } = 0;
@@ -16,7 +16,7 @@
             advanceCount++;
         }
 
-        public NodeBase Register(ParseResult result)
+        public dynamic Register(ParseResult result)
         {
             lastAdvanceCount = result.advanceCount;
             this.advanceCount += result.advanceCount;
@@ -24,7 +24,7 @@
             return result.node;
         }
 
-        public NodeBase TryRegister(ParseResult result)
+        public dynamic TryRegister(ParseResult result)
         {
             if (result.error != null)
             {
@@ -34,7 +34,7 @@
             return Register(result);
         }
 
-        public ParseResult Success(NodeBase node)
+        public ParseResult Success(dynamic node)
         {
             this.node = node;
             return this;
@@ -44,30 +44,6 @@
         {
             if (this.error == null || this.lastAdvanceCount == 0)
                 this.error = error;
-            return this;
-        }
-    }
-
-    public class ParseIfResult : ParseResult
-    {
-        public NodeBase condition { get; protected set; }
-        public NodeBase body { get; protected set; }
-        public bool shouldReturnNull;
-
-        public (NodeBase condition, NodeBase body) Register(ParseResult condition, ParseResult body)
-        {
-            lastAdvanceCount = condition.advanceCount + body.advanceCount;
-            this.advanceCount += condition.advanceCount + body.advanceCount;
-            if (condition.error != null) this.error = condition.error;
-            else if (body.error != null) this.error = body.error;
-            return (condition.node, body.node);
-        }
-
-        public ParseIfResult Success(NodeBase condition, NodeBase body, bool shouldReturnNull)
-        {
-            this.condition = condition;
-            this.body = body;
-            this.shouldReturnNull = shouldReturnNull;
             return this;
         }
     }

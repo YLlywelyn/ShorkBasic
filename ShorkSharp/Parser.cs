@@ -387,17 +387,31 @@
             return result.Success(new ListNode(elements, startPosition, currentToken.endPosition));
         }
 
+        #region Parse If Statements
         protected ParseResult ParseIfExpression()
         {
-            ParseIfResult result = new ParseIfResult();
+            ParseResult result = new ParseResult();
 
-            List<(NodeBase condition, NodeBase body, bool shouldReturnNull)> cases = new List<(NodeBase condition, NodeBase body, bool shouldReturnNull)>();
+            List<IfCase> cases = result.Register(ParseIfOrElif("if"));
+            if (result.error != null) return result;
+            return result.Success(new IfNode(cases.ToArray()));
         }
-        protected ParseIfResult ParseIfCase(string ifKeyword)
+        protected ParseResult ParseElif()
         {
-            ParseIfResult result = new ParseIfResult();
+            return ParseIfOrElif("elif");
+        }
+
+        protected ParseResult ParseIfOrElif(string ifKeyword)
+        {
+            ParseResult result = new ParseResult();
 
         }
+
+        protected ParseResult ParseElse()
+        {
+            ParseResult result = new ParseResult();
+        }
+        #endregion
 
         protected ParseResult ParseForExpression()
         {
